@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aprende+ | Seguimiento Educativo Continuo</title>
+  <style>
+    :root {
+      --primary: #1e40af;
+      --primary-light: #dbeafe;
+      --primary-dark: #1e3a8a;
+      --secondary: #059669;
+      --secondary-light: #d1fae5;
+      --warning: #d97706;
+      --warning-light: #fef3c7;
+      --danger: #dc2626;
+      --danger-light: #fee2e2;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 10px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 40px;
+    }
+
+    header {
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .brand span {
+      color: var(--secondary);
+    }
+
+    .role-switcher {
+      display: flex;
+      background-color: var(--border);
+      padding: 4px;
+      border-radius: 30px;
+      gap: 4px;
+    }
+
+    .role-btn {
+      border: none;
+      background: transparent;
+      padding: 0.4rem 1rem;
+      font-weight: 600;
+      font-size: 0.85rem;
+      border-radius: 20px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .role-btn.active {
+      background-color: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .view-section {
+      display: none;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-primary { background-color: var(--primary-light); color: var(--primary-dark); }
+    .badge-success { background-color: var(--secondary-light); color: var(--secondary); }
+    .badge-warning { background-color: var(--warning-light); color: var(--warning); }
+    .badge-danger { background-color: var(--danger-light); color: var(--danger); }
+
+    .grid-dashboard {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 768px) {
+      .grid-dashboard {
+        grid-template-columns: 1fr;
+      }
+      header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .student-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      background: var(--card-bg);
+      padding: 1.25rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .avatar {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 1.25rem;
+    }
+
+    .progress-bar-container {
+      background-color: var(--border);
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: var(--secondary);
+    }
+
+    .progress-bar.warning { background-color: var(--warning); }
+
+    .evidence-item {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .evidence-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+      margin-bottom: 0;
+    }
+
+    .evidence-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .evidence-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .evidence-desc {
+      font-size: 0.875rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .evidence-recommendation {
+      background-color: #fefce8;
+      border-left: 3px solid #eab308;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.85rem;
+      border-radius: 0 4px 4px 0;
+      color: #713f12;
+    }
+
+    form label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+    }
+
+    form input, form select, form textarea {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    form input:focus, form select:focus, form textarea:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      background-color: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 0.95rem;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .alert-box {
+      background-color: var(--warning-light);
+      border: 1px solid #fde68a;
+      border-radius: var(--radius);
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    .alert-box strong {
+      color: #92400e;
+      display: block;
+      font-size: 0.9rem;
+    }
+
+    .alert-box p {
+      color: #78350f;
+      font-size: 0.85rem;
+      margin: 0;
+    }
+
+    .subject-row {
+      margin-bottom: 1rem;
+    }
+    
+    .subject-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      Aprende<span>+</span>
+    </div>
+    <div class="role-switcher">
+      <button class="role-btn active" onclick="switchView('padre')">Vista: Apoderado</button>
+      <button class="role-btn" onclick="switchView('docente')">Vista: Docente</button>
+    </div>
+  </header>
+
+  <main class="container">
+    
+    <section id="view-padre" class="view-section active">
+      
+      <div class="student-header">
+        <div class="avatar">LG</div>
+        <div style="flex-grow: 1;">
+          <h2 style="font-size: 1.25rem;">Lucas Gómez Rodríguez</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted);">4to de Primaria - Sección "B" | Tutor: Prof. Manuel Ríos</p>
+        </div>
+        <div>
+          <span class="badge badge-success">Acceso Seguro Activo</span>
+        </div>
+      </div>
+
+      <div class="alert-box">
+        <div style="font-size: 1.25rem;">⚠️</div>
+        <div>
+          <strong>Atención Oportuna Sugerida</strong>
+          <p>Se detectó dificultad en la resolución de divisiones con dos cifras. Consulta la recomendación del docente abajo.</p>
+        </div>
+      </div>
+
+      <div class="grid-dashboard">
+        
+        <div>
+          <div class="card">
+            <div class="card-title">
+              <span>Evidencias y Actividades Recientes</span>
+              <span class="badge badge-primary">Esta Semana</span>
+            </div>
+            
+            <div id="parent-evidence-list">
+              <div class="evidence-item">
+                <div class="evidence-meta">Matemáticas • 04 de Septiembre • <strong>Tarea en Clase</strong></div>
+                <div class="evidence-title">Resolución de Divisiones Inexactas</div>
+                <div class="evidence-desc">Lucas comprendió el concepto inicial pero presentó dudas al momento de aplicar las restas intermedias en divisiones de dos cifras.</div>
+                <div class="evidence-recommendation">
+                  💡 <strong>Sugerencia de Refuerzo en Casa:</strong> Practicar 3 ejercicios de divisiones de 2 cifras de la página 45 del libro guía antes del viernes.
+                </div>
+              </div>
+
+              <div class="evidence-item">
+                <div class="evidence-meta">Comunicación • 02 de Septiembre • <strong>Participación</strong></div>
+                <div class="evidence-title">Comprensión Lectora: Cuentos Regionales</div>
+                <div class="evidence-desc">Excelente lectura fluida en voz alta y correcta identificación de la idea principal del texto.</div>
+                <span class="badge badge-success">Logro Destacado</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-title">Progreso Continuo</div>
+            
+            <div class="subject-row">
+              <div class="subject-info">
+                <span>Comunicación</span>
+                <span style="color: var(--secondary);">85% (Buen ritmo)</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 85%;"></div>
+              </div>
+            </div>
+
+            <div class="subject-row">
+              <div class="subject-info">
+                <span>Matemáticas</span>
+                <span style="color: var(--warning);">62% (Refuerzo req.)</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar warning" style="width: 62%;"></div>
+              </div>
+            </div>
+
+            <div class="subject-row">
+              <div class="subject-info">
+                <span>Ciencia y Tecnología</span>
+                <span style="color: var(--secondary);">90% (Excelente)</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 90%;"></div>
+              </div>
+            </div>
+
+            <div class="subject-row">
+              <div class="subject-info">
+                <span>Personal Social</span>
+                <span style="color: var(--secondary);">78% (Adecuado)</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar" style="width: 78%;"></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="card">
+            <div class="card-title">Acompañamiento Escolar</div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+              No necesitas esperar a la entrega de libretas para resolver dudas sobre el avance de tu hijo.
+            </p>
+            <span class="badge badge-primary">Próxima Evaluación: 15 Sep</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="view-docente" class="view-section">
+      
+      <div class="card-title" style="margin-bottom: 1.5rem;">
+        <div>
+          <h2>Panel de Gestión de Aula</h2>
+          <p style="font-size: 0.85rem; color: var(--text-muted); font-weight: normal;">4to de Primaria - Sección "B" (28 Estudiantes)</p>
+        </div>
+      </div>
+
+      <div class="grid-dashboard">
+        
+        <div class="card">
+          <div class="card-title">Registrar Nueva Evidencia / Avance</div>
+          
+          <form id="evidence-form" onsubmit="saveEvidence(event)">
+            <label for="student-select">Estudiante</label>
+            <select id="student-select" required>
+              <option value="Lucas Gómez Rodríguez">Lucas Gómez Rodríguez</option>
+              <option value="Sofía Morales">Sofía Morales</option>
+              <option value="Mateo Paredes">Mateo Paredes</option>
+            </select>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+              <div>
+                <label for="subject-select">Área / Materia</label>
+                <select id="subject-select" required>
+                  <option value="Matemáticas">Matemáticas</option>
+                  <option value="Comunicación">Comunicación</option>
+                  <option value="Ciencia y Tecnología">Ciencia y Tecnología</option>
+                  <option value="Personal Social">Personal Social</option>
+                </select>
+              </div>
+              <div>
+                <label for="category-select">Tipo de Registro</label>
+                <select id="category-select" required>
+                  <option value="Tarea / Actividad">Tarea / Actividad</option>
+                  <option value="Participación">Participación</option>
+                  <option value="Desempeño en Examen">Desempeño en Examen</option>
+                  <option value="Conducta">Conducta</option>
+                </select>
+              </div>
+            </div>
+
+            <label for="title-input">Título de la Actividad</label>
+            <input type="text" id="title-input" placeholder="Ej. Ejercicios de Fracciones Equivalentes" required>
+
+            <label for="observation-input">Observación pedagógica</label>
+            <textarea id="observation-input" rows="3" placeholder="Describe brevemente el desenvolvimiento del alumno..." required></textarea>
+
+            <label for="recommendation-input">Recomendación para el hogar (Opcional)</label>
+            <textarea id="recommendation-input" rows="2" placeholder="Acción preventiva o refuerzo que los padres pueden realizar en casa..."></textarea>
+
+            <button type="submit" class="btn">Publicar Evidencia al Apoderado</button>
+          </form>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-title">Seguimiento Preventivo</div>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Estudiantes con alertas de refuerzo registradas:</p>
+            
+            <div style="margin-bottom: 0.75rem; padding: 0.5rem; background: var(--bg); border-radius: 6px;">
+              <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.85rem;">
+                <span>Lucas Gómez</span>
+                <span style="color: var(--danger);">Matemáticas</span>
+              </div>
+              <p style="font-size: 0.75rem; color: var(--text-muted);">Dificultad en divisiones de 2 cifras.</p>
+            </div>
+
+            <div style="padding: 0.5rem; background: var(--bg); border-radius: 6px;">
+              <div style="display: flex; justify-content: space-between; font-weight: 600; font-size: 0.85rem;">
+                <span>Mateo Paredes</span>
+                <span style="color: var(--warning);">Comunicación</span>
+              </div>
+              <p style="font-size: 0.75rem; color: var(--text-muted);">Refuerzo en signos de puntuación.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script>
+    function switchView(view) {
+      const padreView = document.getElementById('view-padre');
+      const docenteView = document.getElementById('view-docente');
+      const buttons = document.querySelectorAll('.role-btn');
+
+      if (view === 'padre') {
+        padreView.classList.add('active');
+        docenteView.classList.remove('active');
+        buttons[0].classList.add('active');
+        buttons[1].classList.remove('active');
+      } else {
+        padreView.classList.remove('active');
+        docenteView.classList.add('active');
+        buttons[0].classList.remove('active');
+        buttons[1].classList.add('active');
+      }
+    }
+
+    function saveEvidence(event) {
+      event.preventDefault();
+
+      const student = document.getElementById('student-select').value;
+      const subject = document.getElementById('subject-select').value;
+      const category = document.getElementById('category-select').value;
+      const title = document.getElementById('title-input').value;
+      const observation = document.getElementById('observation-input').value;
+      const recommendation = document.getElementById('recommendation-input').value;
+
+      if (student === 'Lucas Gómez Rodríguez') {
+        const evidenceList = document.getElementById('parent-evidence-list');
+        const newEvidence = document.createElement('div');
+        newEvidence.className = 'evidence-item';
+        
+        let recommendationHtml = '';
+        if (recommendation.trim() !== '') {
+          recommendationHtml = `
+            <div class="evidence-recommendation" style="margin-top: 0.5rem;">
+              💡 <strong>Sugerencia de Refuerzo en Casa:</strong> ${recommendation}
+            </div>
+          `;
+        }
+
+        newEvidence.innerHTML = `
+          <div class="evidence-meta">${subject} • Hoy • <strong>${category}</strong></div>
+          <div class="evidence-title">${title}</div>
+          <div class="evidence-desc">${observation}</div>
+          ${recommendationHtml}
+        `;
+
+        evidenceList.insertBefore(newEvidence, evidenceList.firstChild);
+      }
+
+      alert('Evidencia compartida con el apoderado correctamente.');
+      document.getElementById('evidence-form').reset();
+      switchView('padre');
+    }
+  </script>
+</body>
+</html>
